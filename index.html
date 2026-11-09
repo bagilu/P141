@@ -1,1 +1,50 @@
-test
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <meta name="theme-color" content="#173d38">
+  <title>P141 多語導覽｜讓每個人都聽懂</title>
+  <link rel="stylesheet" href="style.css?v=0.001">
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="./"><span class="brand-symbol" aria-hidden="true">◖</span><span>P141 <small>多語導覽</small></span></a><span class="edition">實驗開發版 <b>V0.001</b></span></header>
+  <main>
+    <section class="intro"><p class="eyebrow">A VOICE. MANY WAYS TO FOLLOW.</p><h1>一起聽，也各自看懂。</h1><p class="lead">導遊輕聲說，遊客安心聽。字幕是否開啟、用哪種語言，由每個人自己決定。</p></section>
+    <div id="modeNotice" class="notice"><span class="notice-dot"></span><p><strong>目前為操作示範</strong><br>範例字幕不是語音辨識；示範只在同一瀏覽器的分頁間運作，不傳送語音、不呼叫 AI。</p><button id="modeButton" class="text-button" type="button">查看雲端狀態 ↗</button></div>
+    <p id="feedback" role="status" class="feedback" hidden></p>
+    <div class="workspace">
+      <section class="card setup-card" aria-labelledby="roomTitle">
+        <div class="card-heading"><span class="section-no">01</span><div><p class="eyebrow">YOUR TOUR</p><h2 id="roomTitle">開始一場導覽</h2></div><span id="connectionBadge" class="badge">尚未加入</span></div>
+        <div class="role-switch" role="group" aria-label="選擇身分"><button id="guideRole" type="button" aria-pressed="true">我是導遊</button><button id="visitorRole" type="button" aria-pressed="false">我是遊客</button></div>
+        <div id="guideEntry"><p class="description">建立群組，將加入連結分享給同行的遊客。</p><button id="createRoom" class="primary" type="button">建立示範群組 <span aria-hidden="true">＋</span></button></div>
+        <form id="visitorEntry" hidden><label for="inviteInput">加入連結或邀請碼</label><input id="inviteInput" autocomplete="off" placeholder="貼上導遊分享的連結" maxlength="2000"><button class="primary" type="submit">加入並收聽 <span aria-hidden="true">→</span></button><p class="helper">掃描 QR Code 後會帶入邀請；示範模式需在同一瀏覽器加入。</p></form>
+        <div id="roomPanel" hidden>
+          <div class="room-meta"><span>導覽群組</span><strong id="roomDisplay">—</strong></div>
+          <div id="sharePanel" hidden><div id="qr" class="qr" aria-label="遊客加入 QR Code"></div><p class="helper center">僅供遊客加入，不含導遊管理權限。</p><button id="copyLink" class="secondary" type="button">複製加入連結</button><a id="openVisitor" class="open-link" target="_blank" rel="noopener noreferrer">開啟遊客示範分頁 ↗</a></div>
+          <div id="micPanel" hidden><button id="microphone" class="secondary" type="button" aria-pressed="false">測試本機麥克風</button><p id="micStatus" class="helper">尚未啟用麥克風。示範模式只檢查裝置許可，不傳送聲音。</p></div>
+          <button id="resumeAudio" class="secondary" type="button" hidden>點此啟用聲音播放</button>
+          <button id="leaveRoom" class="danger-link" type="button">結束示範群組</button>
+        </div>
+        <div class="privacy-note"><span aria-hidden="true">◇</span><p>免帳密操作 · 單向導覽<br><span>原音與字幕獨立運作，遊客不需要開啟麥克風。</span></p></div>
+      </section>
+      <section class="card caption-card" aria-labelledby="captionTitle">
+        <div class="card-heading"><span class="section-no">02</span><div><p class="eyebrow">FOLLOW IN YOUR LANGUAGE</p><h2 id="captionTitle">我的字幕</h2></div><span id="captionBadge" class="badge">已關閉</span></div>
+        <div class="caption-settings"><div><label for="captionToggle">顯示文字</label><p>只變更您自己的畫面</p></div><label class="switch"><input id="captionToggle" type="checkbox" disabled><span class="switch-track"></span><span class="sr-only">開啟字幕</span></label></div>
+        <label class="language-label" for="language">文字語言</label><select id="language" disabled><option value="zh">中文（原文）</option><option value="en">English 英文</option></select>
+        <p class="helper">中文、英文先行驗證，其他語言將在確認品質後加入。</p>
+        <div id="captionArea" class="caption-area" aria-live="polite" aria-atomic="false"><div class="empty-state"><span class="caption-mark" aria-hidden="true">Aa</span><h3 id="emptyTitle">專心聽，也可以。</h3><p id="emptyMessage">加入導覽後，可自行開啟字幕並選擇語言。</p></div></div>
+        <div class="caption-bottom"><span id="sourceLabel">導遊原音</span><span>文字可隨時開關</span></div>
+      </section>
+    </div>
+    <section class="service-strip" aria-labelledby="serviceTitle"><div><p class="eyebrow">ONLY WHEN NEEDED</p><h2 id="serviceTitle">有人需要，才處理字幕。</h2><p>同語言共用結果；全團關閉字幕，就不再進行辨識與翻譯。</p></div><dl><div><dt>遊客</dt><dd id="listenerCount">0</dd></div><div><dt>辨識需求</dt><dd id="sttState">未啟動</dd></div><div><dt>翻譯需求</dt><dd id="translationState">無</dd></div></dl><button id="sampleButton" class="secondary" type="button" hidden disabled>傳送一段範例字幕 →</button></section>
+    <details class="cloud-details" id="cloudDetails"><summary>開發進度與雲端連線</summary><p id="cloudStatus">正在檢查設定…</p><p>本版可驗證個人字幕開關、不同語言並存與同語言共用需求。真實跨手機語音、雲端辨識、翻譯及費用量測，尚待平台接線與實機驗收。</p><button id="useDemo" class="text-button" type="button">使用操作示範</button><button id="useCloud" class="text-button" type="button" disabled>切換雲端連線</button></details>
+  </main>
+  <footer>慈濟大學｜經營管理學系｜好玩實驗室 <span>· Web Version V0.001 · SBI-P-SDS v3.6 對照中（尚未完成驗收）</span></footer>
+  <script src="vendor/qrcode.js?v=0.001"></script>
+  <script src="vendor/supabase.js?v=0.001"></script>
+  <script src="vendor/livekit-client.umd.js?v=0.001"></script>
+  <script type="module" src="app.js?v=0.001"></script>
+</body>
+</html>
